@@ -68,4 +68,4 @@ UrbanFlow-AI/
 
 **Reza Mansouri**  
 Data Science & AI Engineering  
-[LinkedIn](https://linkedin.com/in/yourprofile) | [GitHub](https://github.com/YourUsername)
+[LinkedIn](https://linkedin.com/in/reza-mansouri-18aa71252/) | [GitHub](https://github.com/reza-mansouri1998)
