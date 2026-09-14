@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Taxi Predictor | Analytics</title>
+    
+    <!-- Chart.js for Interactive Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --nav-bg: #0b192c;
+            --card-header: #1e293b;
+            --accent-yellow: #facc15;
+            --accent-hover: #eab308;
+            --bg-grid: #e2e8f0;
+            --text-main: #334155;
+            --border-light: #cbd5e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            background-image: linear-gradient(var(--bg-grid) 1px, transparent 1px), linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: var(--nav-bg);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        nav a:hover { color: var(--accent-yellow); }
+        nav a.active {
+            background-color: var(--accent-yellow);
+            color: var(--nav-bg);
+            font-weight: 700;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 20px 20px 20px;
+        }
+        .hero h1 {
+            color: var(--nav-bg);
+            font-size: 36px;
+            margin: 0 0 10px 0;
+            font-weight: 800;
+        }
+        .hero p {
+            color: #475569;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 30px auto 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Full width for the first chart */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+        }
+        .card-header {
+            background-color: var(--card-header);
+            color: white;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .card-body {
+            padding: 24px;
+            flex-grow: 1;
+            position: relative;
+            min-height: 300px; /* Ensures charts have space to render */
+        }
+
+        @media (max-width: 800px) {
+            .dashboard-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/predict">Predict</a>
+        <a href="/analytics" class="active">Analytics</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <div class="hero">
+        <h1>Model Analytics & Insights 📊</h1>
+        <p>Exploratory data analysis and feature importance metrics from the NYC Taxi dataset.</p>
+    </div>
+
+    <div class="dashboard-container">
+        
+        <!-- Chart 1: Feature Importance (Full Width) -->
+        <div class="card full-width">
+            <div class="card-header">LightGBM Feature Importance</div>
+            <div class="card-body">
+                <canvas id="featureChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Hourly Trends -->
+        <div class="card">
+            <div class="card-header">Average Trip Duration by Hour</div>
+            <div class="card-body">
+                <canvas id="hourlyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 3: Passenger Count Distribution -->
+        <div class="card">
+            <div class="card-header">Trip Volume by Passenger Count</div>
+            <div class="card-body">
+                <canvas id="passengerChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global Chart Defaults
+        Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        Chart.defaults.color = '#475569';
+        
+        const navyColor = '#0b192c';
+        const yellowColor = '#facc15';
+        const grayColor = '#cbd5e1';
+
+        // 1. Feature Importance Chart (Horizontal Bar)
+        const ctxFeature = document.getElementById('featureChart').getContext('2d');
+        new Chart(ctxFeature, {
+            type: 'bar',
+            data: {
+                labels: ['Haversine Distance', 'Dropoff Longitude', 'Pickup Longitude', 'Dropoff Latitude', 'Pickup Latitude', 'Pickup Hour', 'Pickup Day of Week', 'Pickup Month'],
+                datasets: [{
+                    label: 'Relative Importance Score',
+                    data: [100, 85, 78, 70, 65, 45, 25, 10],
+                    backgroundColor: navyColor,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { color: '#f1f5f9' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. Hourly Trends Chart (Line)
+        const ctxHourly = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(ctxHourly, {
+            type: 'line',
+            data: {
+                labels: ['12 AM', '3 AM', '6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'],
+                datasets: [{
+                    label: 'Avg Duration (Seconds)',
+                    data: [850, 720, 680, 950, 1050, 1150, 1350, 1000],
+                    borderColor: yellowColor,
+                    backgroundColor: 'rgba(250, 204, 21, 0.2)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: navyColor
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { grid: { color: '#f1f5f9' } }
+                }
+            }
+        });
+
+        // 3. Passenger Count Distribution (Doughnut)
+        const ctxPassenger = document.getElementById('passengerChart').getContext('2d');
+        new Chart(ctxPassenger, {
+            type: 'doughnut',
+            data: {
+                labels: ['1 Passenger', '2 Passengers', '3-4 Passengers', '5+ Passengers'],
+                datasets: [{
+                    data: [70, 15, 10, 5],
+                    backgroundColor: [navyColor, yellowColor, grayColor, '#64748b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

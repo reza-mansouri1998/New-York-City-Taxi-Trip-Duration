@@ -7,4 +7,6 @@ ipykernel
 catboost
 xgboost
 lightgbm
--e .
+flask
+geopy
+# -e .

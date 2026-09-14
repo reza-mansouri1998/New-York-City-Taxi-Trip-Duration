@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Taxi Predictor | Home</title>
+    
+    <style>
+        :root {
+            --nav-bg: #0b192c;
+            --card-header: #1e293b;
+            --accent-yellow: #facc15;
+            --accent-hover: #eab308;
+            --bg-grid: #e2e8f0;
+            --text-main: #334155;
+            --border-light: #cbd5e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            background-image: linear-gradient(var(--bg-grid) 1px, transparent 1px), linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: var(--nav-bg);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        nav a:hover { color: var(--accent-yellow); }
+        nav a.active {
+            background-color: var(--accent-yellow);
+            color: var(--nav-bg);
+            font-weight: 700;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            color: var(--nav-bg);
+            font-size: 48px;
+            margin: 0 0 20px 0;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero p {
+            color: #475569;
+            font-size: 18px;
+            margin: 0 0 40px 0;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        /* Call to Action Button */
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent-yellow);
+            color: var(--nav-bg);
+            text-decoration: none;
+            padding: 16px 36px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 8px;
+            text-transform: uppercase;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .cta-button:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1000px;
+            margin: 40px auto 80px auto;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        .feature-card h3 {
+            color: var(--nav-bg);
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        .feature-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 800px) {
+            .features { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="active">Home</a>
+        <a href="/predict">Predict</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <div class="hero">
+        <div style="font-size: 48px; margin-bottom: 20px;">🚕</div>
+        <h1>NYC Taxi Trip Duration Predictor</h1>
+        <p>An end-to-end machine learning application designed to estimate travel times across New York City. Built with highly optimized ensemble tree models and interactive geospatial routing.</p>
+        <a href="/predict" class="cta-button">Start Prediction Platform</a>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>Advanced Machine Learning</h3>
+            <p>Powered by a finely-tuned LightGBM regression model, trained on millions of historical New York City taxi records to accurately extrapolate temporal and spatial travel patterns.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🗺️</div>
+            <h3>Geospatial Intelligence</h3>
+            <p>Utilizes reverse geocoding via Nominatim and road-network snapping via OSRM to seamlessly translate user text inputs into precise mathematical Haversine distances.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <h3>Modular MLOps Pipeline</h3>
+            <p>Architected with strict separation of concerns, featuring dedicated modules for data ingestion, transformation, global model caching, and Flask API deployment.</p>
+        </div>
+    </div>
+
+</body>
+</html>
