@@ -29,11 +29,31 @@ The backend architecture follows strict MLOps principles:
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/YourUsername/UrbanFlow-AI.git](https://github.com/YourUsername/UrbanFlow-AI.git)
+   git clone https://github.com/reza-mansouri1998/UrbanFlow-AI.git
    cd UrbanFlow-AI
+   ```
 
+2. **Create a virtual environment (optional but recommended):**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-   UrbanFlow-AI/
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the application:**
+   ```bash
+   python app.py
+   ```
+5. **Access the web app:** Open `[http://127.0.0.1:5000](http://127.0.0.1:5000)` in your browser.
+
+## 📂 Project Structure
+
+```text
+UrbanFlow-AI/
 ├── artifacts/              # Serialized model and preprocessor (.pkl)
 ├── src/
 │   ├── components/         # Data ingestion, transformation, model trainer
@@ -42,10 +62,10 @@ The backend architecture follows strict MLOps principles:
 ├── app.py                  # Flask application routing
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
+```
 
-👨‍💻 Author
+## 👨‍💻 Author
 
-Reza Mansouri
-Data Science & AI Engineering
-[LinkedIn](https://www.linkedin.com/in/reza-mansouri-18aa71252/) | GitHub
-
+**Reza Mansouri**  
+Data Science & AI Engineering  
+[LinkedIn](https://linkedin.com/in/yourprofile) | [GitHub](https://github.com/YourUsername)
