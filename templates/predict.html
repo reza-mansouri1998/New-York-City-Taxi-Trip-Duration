@@ -23,7 +23,6 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f8fafc;
-            /* Creates the grid background from the mockup */
             background-image: linear-gradient(var(--bg-grid) 1px, transparent 1px), linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
             background-size: 40px 40px;
             color: var(--text-main);
@@ -70,12 +69,6 @@
             margin: 0 0 8px 0;
             font-weight: 800;
         }
-        .hero p {
-            color: #475569;
-            margin: 0;
-            font-size: 16px;
-            font-weight: 500;
-        }
         .hero-graphics {
             font-size: 32px;
             display: flex;
@@ -84,9 +77,9 @@
             margin-top: 15px;
         }
 
-        /* Main Container & Cards */
+        /* Main Container & Cards - Enlarged for better fit */
         .container {
-            max-width: 1000px;
+            max-width: 1150px;
             margin: 20px auto 0 auto;
             padding: 0 20px;
             display: grid;
@@ -130,6 +123,7 @@
             font-weight: 600;
             margin-bottom: 6px;
             color: var(--nav-bg);
+            white-space: nowrap;
         }
         input, select {
             padding: 10px 14px;
@@ -139,6 +133,8 @@
             outline: none;
             background-color: #f8fafc;
             transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            box-sizing: border-box;
         }
         input:focus, select:focus {
             border-color: var(--accent-hover);
@@ -191,14 +187,37 @@
         .results-header h2 { font-size: 32px; color: var(--nav-bg); margin: 5px 0; font-weight: 800;}
         .results-header p { color: #64748b; font-size: 14px; margin: 0; font-weight: 500;}
         
+        /* Map Styles */
         #map {
             height: 300px;
             border-radius: 8px;
             border: 1px solid var(--border-light);
             margin-bottom: 10px;
             z-index: 1;
+            transition: all 0.3s ease-in-out;
         }
-        .map-hint { text-align: center; font-size: 12px; color: #64748b; margin-bottom: 10px; }
+        /* Fullscreen Map Override */
+        #map.fullscreen {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .map-hint { 
+            text-align: center; 
+            font-size: 14px; 
+            font-weight: 600;
+            color: #334155; 
+            margin-bottom: 12px; 
+            background-color: #f1f5f9;
+            padding: 8px;
+            border-radius: 6px;
+        }
         
         /* Hide OSRM turn-by-turn panel */
         .leaflet-routing-container { display: none !important; }
@@ -220,7 +239,6 @@
 
     <div class="hero">
         <h1>NYC Taxi Trip Duration Predictor</h1>
-        <p>Kaggle Competition Deployment</p>
         <div class="hero-graphics">
             <span>🚕</span><span>📍</span><span>🚕</span>
         </div>
@@ -249,9 +267,9 @@
                             <input type="hidden" id="pickup_name" name="pickup_name" value="{{ request.form['pickup_name'] if request.form else '' }}">
                         </div>
 
-                        <!-- Searchable Dropoff -->
+                        <!-- Searchable Destination -->
                         <div class="form-group">
-                            <label>Dropoff Location</label>
+                            <label>Destination Location</label>
                             <input type="text" id="dropoff_search" placeholder="Type or click map..." autocomplete="off" required
                                    value="{{ request.form['dropoff_name'] if request.form else '' }}">
                             <div id="dropoff_list" class="autocomplete-list"></div>
@@ -273,22 +291,23 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group" style="flex: 0.5;">
+                        <!-- Adjusted flex values to prevent squishing -->
+                        <div class="form-group" style="flex: 0.8;">
                             <label>Passenger Count</label>
                             <input type="number" name="passenger_count" min="1" max="6" required value="{{ request.form['passenger_count'] if request.form else '1' }}">
                         </div>
-                        <div class="form-group">
-                            <label>Vendor</label>
+                        <div class="form-group" style="flex: 1.2;">
+                            <label>Taxi Provider</label>
                             <select name="vendor_id" required>
-                                <option value="1" {% if request.form.get('vendor_id') == '1' %}selected{% endif %}>Vendor 1 (CMT)</option>
-                                <option value="2" {% if request.form.get('vendor_id') == '2' %}selected{% endif %}>Vendor 2 (VTS)</option>
+                                <option value="1" {% if request.form.get('vendor_id') == '1' %}selected{% endif %}>Creative Mobile</option>
+                                <option value="2" {% if request.form.get('vendor_id') == '2' %}selected{% endif %}>VeriFone</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 0.5;">
-                            <label>Store & Fwd Flag</label>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Store & Forward</label>
                             <select name="store_and_fwd_flag" required>
-                                <option value="N" {% if request.form.get('store_and_fwd_flag') == 'N' %}selected{% endif %}>N</option>
-                                <option value="Y" {% if request.form.get('store_and_fwd_flag') == 'Y' %}selected{% endif %}>Y</option>
+                                <option value="N" {% if request.form.get('store_and_fwd_flag') == 'N' %}selected{% endif %}>NO</option>
+                                <option value="Y" {% if request.form.get('store_and_fwd_flag') == 'Y' %}selected{% endif %}>YES</option>
                             </select>
                         </div>
                     </div>
@@ -331,14 +350,55 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     
     <script>
-        // --- 1. Map Initialization ---
-        var map = L.map('map').setView([40.7306, -73.9352], 11);
+        // --- 1. Map Initialization (Restricted to NYC Bounds) ---
+        var nycBounds = [
+            [40.4774, -74.2591], // Southwest corner (Staten Island / Lower Bay)
+            [40.9176, -73.7004]  // Northeast corner (Bronx / Queens border)
+        ];
+
+        var map = L.map('map', {
+            maxBounds: nycBounds,
+            maxBoundsViscosity: 1.0, // Prevents dragging outside bounds
+            minZoom: 10 // Prevents zooming out too far
+        }).setView([40.7306, -73.9352], 11);
+        
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap', subdomains: 'abcd', maxZoom: 20
         }).addTo(map);
 
         var pickupMarker = null, dropoffMarker = null, routingControl = null;
         var clickState = 0; // 0 = next click is pickup, 1 = dropoff
+
+        // Custom Fullscreen Zoom Control
+        var fullscreenControl = L.control({position: 'topright'});
+        fullscreenControl.onAdd = function(map) {
+            var btn = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            btn.innerHTML = '⤢';
+            btn.title = "Toggle Fullscreen";
+            btn.style.backgroundColor = 'white';
+            btn.style.width = '34px';
+            btn.style.height = '34px';
+            btn.style.fontSize = '20px';
+            btn.style.lineHeight = '34px';
+            btn.style.textAlign = 'center';
+            btn.style.cursor = 'pointer';
+            
+            btn.onclick = function(e){
+                e.stopPropagation();
+                var mapEl = document.getElementById('map');
+                if(mapEl.classList.contains('fullscreen')) {
+                    mapEl.classList.remove('fullscreen');
+                    btn.innerHTML = '⤢';
+                } else {
+                    mapEl.classList.add('fullscreen');
+                    btn.innerHTML = '✖';
+                }
+                // Allow the CSS transition to finish before recalculating map size
+                setTimeout(() => map.invalidateSize(), 300); 
+            }
+            return btn;
+        }
+        fullscreenControl.addTo(map);
 
         // Custom Markers
         function createIcon(letter, color) {

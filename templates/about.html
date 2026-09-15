@@ -137,9 +137,35 @@
             border: 2px solid var(--border-light);
         }
 
+        /* Social Buttons */
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn-social {
+            text-decoration: none;
+            background-color: var(--nav-bg);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-social:hover {
+            background-color: var(--card-header);
+            color: var(--accent-yellow);
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 32px; }
             .dev-profile { flex-direction: column; text-align: center; }
+            .social-links { justify-content: center; }
         }
     </style>
 </head>
@@ -154,7 +180,7 @@
 
     <div class="hero">
         <h1>System Architecture & Methodology</h1>
-        <p>A comprehensive overview of the machine learning pipeline, geospatial engineering, and deployment strategies powering the NYC Taxi Predictor.</p>
+        <p>A comprehensive overview of the machine learning pipeline, geospatial engineering, containerization, and automated CI/CD deployment strategies powering the NYC Taxi Predictor.</p>
     </div>
 
     <div class="container">
@@ -176,19 +202,19 @@
                 <span>🗺️</span> Geospatial Engineering
             </div>
             <div class="section-body">
-                <p>To bridge the gap between mathematical model requirements and human-centric design, the frontend utilizes advanced geospatial APIs. <span class="highlight">Leaflet.js</span> and <span class="highlight">CartoDB</span> provide the minimalist map visualization.</p>
-                <p>User inputs are dynamically parsed using the <span class="highlight">Nominatim OpenStreetMap API</span> for reverse and forward geocoding, converting clicked locations or text inputs into precise coordinates. Finally, the <span class="highlight">OSRM (Open Source Routing Machine)</span> calculates real-time road routing, snapping the trip path to actual NYC streets rather than relying on geometric straight lines.</p>
+                <p>To bridge the gap between mathematical model requirements and human-centric design, the frontend utilizes advanced geospatial APIs. <span class="highlight">Leaflet.js</span> and custom-styled <span class="highlight">CartoDB map tiles</span> provide a responsive, restricted NYC-bounded interface.</p>
+                <p>User inputs are dynamically parsed using the <span class="highlight">Nominatim OpenStreetMap API</span> for reverse and forward geocoding, converting clicked locations or text searches into precise coordinate points. Finally, <span class="highlight">Leaflet Routing Machine</span> calculates real-time road routing, snapping the trip path to actual NYC streets rather than relying on geometric straight lines.</p>
             </div>
         </div>
 
-        <!-- MLOps Section -->
+        <!-- MLOps & Containerization Section -->
         <div class="section-card">
             <div class="section-header">
-                <span>⚙️</span> Modular MLOps Pipeline
+                <span>⚙️</span> MLOps, Containerization & CI/CD
             </div>
             <div class="section-body">
-                <p>The backend architecture follows strict MLOps principles, utilizing a modular Python structure. Dedicated components for <span class="highlight">data ingestion</span>, <span class="highlight">data transformation</span>, and <span class="highlight">model training</span> ensure the system is highly scalable and easily retrainable as new data becomes available.</p>
-                <p>The application is served via a <span class="highlight">Flask API</span>. To eliminate disk-read latency during user requests, the predictive model and data preprocessors are cached globally in memory upon server initialization, resulting in millisecond prediction response times.</p>
+                <p>The application follows rigorous enterprise MLOps principles. The backend is structured into modular Python components for <span class="highlight">data ingestion</span>, <span class="highlight">transformation</span>, and <span class="highlight">prediction pipelines</span>, served via a <span class="highlight">Flask API</span> wrapped in a high-performance <span class="highlight">Gunicorn production server</span>.</p>
+                <p>To ensure total environment reproducibility and eliminate version conflicts, the system is fully containerized using a lightweight <span class="highlight">Docker</span> image (Python 3.14-slim) with compiled C++ support (`libgomp1`) for LightGBM. Furthermore, automated software quality is maintained through <span class="highlight">Pytest unit testing</span> and continuous integration workflows executed via <span class="highlight">GitHub Actions</span> on every push.</p>
             </div>
         </div>
 
@@ -201,7 +227,16 @@
                 <div class="dev-icon">🎓</div>
                 <div>
                     <p>Developed by <span class="highlight">Reza Mansouri</span>, currently pursuing a Master of Science in Data Science at Università degli Studi della Campania Luigi Vanvitelli.</p>
-                    <p>With a foundational background holding an MSc in Sustainable Architecture from Politecnico di Torino, this project reflects a continuous drive to bridge complex analytical systems with clean, user-centric design—applying the structural discipline of architecture to robust machine learning operations and AI engineering.</p>
+                    <p>With a foundational background holding an MSc in Sustainable Architecture from Politecnico di Torino, this project reflects a continuous drive to bridge complex analytical systems with clean, user-centric design—applying structural rigor to robust machine learning operations, containerization, and AI engineering.</p>
+                    
+                    <div class="social-links">
+                        <a href="https://github.com/reza-mansouri1998" target="_blank" class="btn-social">
+                            <span>📂</span> GitHub Profile
+                        </a>
+                        <a href="https://www.linkedin.com/in/reza-mansouri-18aa71252/" target="_blank" class="btn-social">
+                            <span>💼</span> LinkedIn Profile
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

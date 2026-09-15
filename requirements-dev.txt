@@ -1,0 +1,11 @@
+# First, install everything from the production file
+-r requirements.txt
+
+# Then, install the exploration and plotting tools
+matplotlib
+seaborn
+ipykernel
+pytest
+
+# Install the local package in editable mode for development
+-e .

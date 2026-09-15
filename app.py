@@ -44,15 +44,17 @@ def predict_datapoint():
             # Validation: Ensure the user actually selected locations before submitting
             if not p_lat_str or not d_lat_str:
                 return render_template('predict.html', 
-                                       error_message="Please select valid locations from the dropdown or map before predicting.")
+                                       error_message="Please select locations on the map before predicting.")
 
             p_lat, p_lon = float(p_lat_str), float(p_lon_str)
             d_lat, d_lon = float(d_lat_str), float(d_lon_str)
 
-            # 2. Combine Date and Time for the pipeline
+            # 2. Capture and format the Date and Time from the split HTML inputs
             pickup_date = request.form.get('pickup_date')
             pickup_time = request.form.get('pickup_time')
-            pickup_datetime = f"{pickup_date} {pickup_time}:00"
+            
+            # Combine them into the format expected by LightGBM (YYYY-MM-DD HH:MM:SS)
+            formatted_datetime = f"{pickup_date} {pickup_time}:00"
 
             # 3. Initialize Data Bridge
             data = CustomData(
@@ -63,20 +65,20 @@ def predict_datapoint():
                 dropoff_latitude=d_lat,
                 dropoff_longitude=d_lon,
                 store_and_fwd_flag=request.form.get('store_and_fwd_flag'),
-                pickup_datetime=pickup_datetime
+                pickup_datetime=formatted_datetime
             )
             
             # 4. Generate prediction using the globally loaded pipeline
             pred_df = data.get_data_as_data_frame()
-            results = predict_pipeline.predict(pred_df)
+            prediction_output = predict_pipeline.predict(pred_df)
             
-            # 5. Format results for the UI
-            total_seconds = int(results[0])
+            # 5. Extract total seconds and format for the UI
+            total_seconds = int(prediction_output[0])
             minutes = total_seconds // 60
             seconds = total_seconds % 60
-            formatted_time = f"approximately {minutes} Minutes {seconds} Seconds"
+            formatted_time = f"Approximately {minutes} Minutes {seconds} Seconds"
             
-            # Render the template (Jinja automatically persists the request.form data for the map)
+            # 6. Render the template with the exact variables the HTML Jinja expects
             return render_template('predict.html', 
                                    total_seconds=total_seconds,
                                    formatted_time=formatted_time)
@@ -86,5 +88,5 @@ def predict_datapoint():
             return f"An error occurred in processing: {str(e)}"
 
 if __name__ == "__main__":
-    # use_reloader=False prevents the Flask server from freezing in the Windows VS Code terminal
-    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
+    # Changed host to 0.0.0.0 so the container is accessible from the outside network
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)

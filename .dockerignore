@@ -1,0 +1,29 @@
+# Virtual Environments
+venv/
+env/
+.env
+
+# VS Code Settings
+.vscode/
+
+# Python Cache and Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+src/__pycache__/
+src/nyc_taxi_trip_duration.egg-info/
+
+# Git repository data
+.git/
+.gitignore
+
+# Jupyter Notebooks and Heavy Data (CSV files)
+notebook/
+
+# Logs
+logs/
+
+# Development Files
+requirements-dev.txt
+README.md
